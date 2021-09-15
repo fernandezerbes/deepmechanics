@@ -9,13 +9,16 @@ class Grid:
         self.base_cells = []
         self._leaf_cells = []
         self._active_leaf_cells = []
-        self._refinement_strategy = []
+        self._refinement_strategy = None
 
     def generate(self):
         pass
 
     @property
     def refinement_strategy(self):
+        if self._refinement_strategy is None:
+            raise ValueError("Refinement strategy is not initialized")
+        
         return self._refinement_strategy
 
     @refinement_strategy.setter
@@ -37,6 +40,9 @@ class Grid:
             self._active_leaf_cells += cell.active_leaves
 
         return self._active_leaf_cells
+
+    def refine(self):
+        self.refinement_strategy.refine(self)
 
 class PlanarCartesianGrid(Grid):
 
@@ -64,9 +70,6 @@ class PlanarCartesianGrid(Grid):
                 y_start_cell = self.y_start + dy * j
                 y_end_cell = y_start_cell + dy
                 self.base_cells.append(QuadCell(x_start_cell, y_start_cell, x_end_cell, y_end_cell))
-
-    def refine(self):
-        self.refinement_strategy.refine(self)
 
     def triangulate(self):
         triangles = []
