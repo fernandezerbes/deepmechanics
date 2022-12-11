@@ -1,10 +1,10 @@
+import unittest
+
 from deepmechanics.kinematics import LinearKinematicLaw
 from deepmechanics.utilities import tensorize_2d
-import unittest
 
 
 class TestKinematics(unittest.TestCase):
-
     def setUp(self):
         self.kinematic_law = LinearKinematicLaw()
 
@@ -29,4 +29,6 @@ class TestKinematics(unittest.TestCase):
         for i in range(len(samples)):
             self.assertAlmostEqual(ex.detach().numpy()[i][0], ex_expected[i][0])
             self.assertAlmostEqual(ey.detach().numpy()[i][0], ey_expected[i][0])
-            self.assertAlmostEqual(gamma_xy.detach().numpy()[i][0], gamma_xy_expected[i][0])
+            self.assertAlmostEqual(
+                gamma_xy.detach().numpy()[i][0], gamma_xy_expected[i][0]
+            )

@@ -1,11 +1,9 @@
-
 class Refinement:
-
     def __init__(self, depth):
         self.depth = depth
 
-class RefineBoundaries(Refinement):
 
+class RefineBoundaries(Refinement):
     def __init__(self, depth, domain):
         super().__init__(depth)
         self.domain = domain
@@ -21,8 +19,8 @@ class RefineBoundaries(Refinement):
                 if child.is_cut(domain, seeds_per_side):
                     self.refine_recursive(child, domain, depth - 1, seeds_per_side)
 
-class AgregatedRefinementStrategy:
 
+class AgregatedRefinementStrategy:
     def __init__(self, *strategies):
         self.strategies = [strategy for strategy in strategies]
 

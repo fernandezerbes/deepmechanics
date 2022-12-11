@@ -1,14 +1,16 @@
-import deepmechanics.materialmodel as mm
 import unittest
+
+import deepmechanics.materialmodel as mm
 
 
 class TestLinearElasticPlaneStressMaterialModel(unittest.TestCase):
-
     def setUp(self):
         self.youngs_modulus = 10
         self.poissons_ratio = 0.3
         self.thickness = 0.1
-        self.material_model = mm.LinearElasticPlaneStressMaterialModel(self.youngs_modulus, self.poissons_ratio, self.thickness)
+        self.material_model = mm.LinearElasticPlaneStressMaterialModel(
+            self.youngs_modulus, self.poissons_ratio, self.thickness
+        )
 
     def test_compute_stresses(self):
         ex = 1.5
@@ -23,12 +25,13 @@ class TestLinearElasticPlaneStressMaterialModel(unittest.TestCase):
 
 
 class TestLinearElasticPlaneStrainMaterialModel(unittest.TestCase):
-
     def setUp(self):
         self.youngs_modulus = 10
         self.poissons_ratio = 0.3
         self.thickness = 0.1
-        self.material_model = mm.LinearElasticPlaneStrainMaterialModel(self.youngs_modulus, self.poissons_ratio, self.thickness)
+        self.material_model = mm.LinearElasticPlaneStrainMaterialModel(
+            self.youngs_modulus, self.poissons_ratio, self.thickness
+        )
 
     def test_compute_stresses(self):
         ex = 1.5

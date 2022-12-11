@@ -1,18 +1,18 @@
+import unittest
+
 from deepmechanics.cell import Cell, QuadCell
 from deepmechanics.implicitgeometry import make_rectangle
-import unittest
 
 
 class TestCell(unittest.TestCase):
-
     def setUp(self):
         self.cell = Cell(2)
 
     def test_spatial_dimensions(self):
         self.assertEqual(self.cell.spatial_dimensions, 2)
 
-class TestQuadCell(unittest.TestCase):
 
+class TestQuadCell(unittest.TestCase):
     def setUp(self):
         self.cell = QuadCell(1.0, 1.0, 5.0, 3.0)
 
@@ -78,7 +78,7 @@ class TestQuadCell(unittest.TestCase):
         self.assertAlmostEqual(ys[0], 1.42264973081037)
         self.assertAlmostEqual(ys[1], 2.57735026918963)
 
-        # TODO Test refined case 
+        # TODO Test refined case
 
     def test_top_coords(self):
         xs, ys = self.cell.top_coords
@@ -228,7 +228,9 @@ class TestQuadCell(unittest.TestCase):
         self.assertEqual(count_inside, 100)
 
         domain_for_cell_half_outside = make_rectangle(0, 0, self.cell.x_mid, 11)
-        count_half_outside = self.cell._count_inside_seeds(domain_for_cell_half_outside, 10)
+        count_half_outside = self.cell._count_inside_seeds(
+            domain_for_cell_half_outside, 10
+        )
         self.assertEqual(count_half_outside, 50)
 
     def test_is_cut(self):
@@ -285,7 +287,7 @@ class TestQuadCell(unittest.TestCase):
 
         self.cell.children[0].refine()
         self.assertEqual(len(self.cell.bottom_leaves), 3)
-        
+
         self.cell.delete_all_children()
 
     def test_right_leaves(self):
@@ -298,7 +300,7 @@ class TestQuadCell(unittest.TestCase):
 
         self.cell.children[1].refine()
         self.assertEqual(len(self.cell.right_leaves), 3)
-        
+
         self.cell.delete_all_children()
 
     def test_left_leaves(self):
@@ -311,5 +313,5 @@ class TestQuadCell(unittest.TestCase):
 
         self.cell.children[0].refine()
         self.assertEqual(len(self.cell.left_leaves), 3)
-        
+
         self.cell.delete_all_children()

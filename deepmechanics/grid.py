@@ -3,7 +3,6 @@ from deepmechanics.utilities import make_array_unique, tensorize_1d, tensorize_2
 
 
 class Grid:
-
     def __init__(self, spatial_dimensions):
         self.spatial_dimensions = spatial_dimensions
         self.base_cells = []
@@ -18,19 +17,19 @@ class Grid:
     def refinement_strategy(self):
         if self._refinement_strategy is None:
             raise ValueError("Refinement strategy is not initialized")
-        
+
         return self._refinement_strategy
 
     @refinement_strategy.setter
     def refinement_strategy(self, value):
         self._refinement_strategy = value
-    
+
     @property
     def leaf_cells(self):
         self._leaf_cells.clear()
         for cell in self.base_cells:
             self._leaf_cells += cell.leaves
-        
+
         return self._leaf_cells
 
     @property
@@ -44,8 +43,8 @@ class Grid:
     def refine(self):
         self.refinement_strategy.refine(self)
 
-class PlanarCartesianGrid(Grid):
 
+class PlanarCartesianGrid(Grid):
     def __init__(self, x_start, y_start, x_end, y_end, resolution_x, resolution_y):
         super().__init__(2)
         self.x_start = x_start
@@ -59,7 +58,7 @@ class PlanarCartesianGrid(Grid):
     def generate(self):
         if self.base_cells:
             raise ValueError("Grid already generated!")
-        
+
         dx = self.length_x / self.resolution_x
         dy = self.length_y / self.resolution_y
 
@@ -69,61 +68,63 @@ class PlanarCartesianGrid(Grid):
                 x_end_cell = x_start_cell + dx
                 y_start_cell = self.y_start + dy * j
                 y_end_cell = y_start_cell + dy
-                self.base_cells.append(QuadCell(x_start_cell, y_start_cell, x_end_cell, y_end_cell))
+                self.base_cells.append(
+                    QuadCell(x_start_cell, y_start_cell, x_end_cell, y_end_cell)
+                )
 
     def triangulate(self):
         triangles = []
         for i in range(len(self.active_leaf_cells)):
-            triangles.append([4*i, 4*i+1, 4*i+3])
-            triangles.append([4*i, 4*i+3, 4*i+2])
+            triangles.append([4 * i, 4 * i + 1, 4 * i + 3])
+            triangles.append([4 * i, 4 * i + 3, 4 * i + 2])
         return triangles
 
     @property
     def top_base_cells(self):
-        return self.base_cells[-self.resolution_x:]
-    
+        return self.base_cells[-self.resolution_x :]
+
     @property
     def top_leaf_cells(self):
         leaf_cells = []
         for cell in self.top_base_cells:
             leaf_cells += cell.top_leaves
-        
+
         return leaf_cells
 
     @property
     def bottom_base_cells(self):
-        return self.base_cells[:self.resolution_x]
+        return self.base_cells[: self.resolution_x]
 
     @property
     def bottom_leaf_cells(self):
         leaf_cells = []
         for cell in self.bottom_base_cells:
             leaf_cells += cell.bottom_leaves
-        
+
         return leaf_cells
 
     @property
     def right_base_cells(self):
-        return self.base_cells[self.i_end::self.resolution_x]
+        return self.base_cells[self.i_end :: self.resolution_x]
 
     @property
     def right_leaf_cells(self):
         leaf_cells = []
         for cell in self.right_base_cells:
             leaf_cells += cell.right_leaves
-        
+
         return leaf_cells
 
     @property
     def left_base_cells(self):
-        return self.base_cells[::self.resolution_x]
+        return self.base_cells[:: self.resolution_x]
 
     @property
     def left_leaf_cells(self):
         leaf_cells = []
         for cell in self.left_base_cells:
             leaf_cells += cell.left_leaves
-        
+
         return leaf_cells
 
     @property
@@ -158,7 +159,7 @@ class PlanarCartesianGrid(Grid):
         for cell in self.active_leaf_cells:
             weights += cell.integration_point_weights
         return weights
-    
+
     @property
     def integration_point_jacobian_dets(self):
         jacobian_dets = []
@@ -189,7 +190,7 @@ class PlanarCartesianGrid(Grid):
         for cell in self.top_base_cells:
             jacobian_dets += cell.top_edge_integration_point_jacobian_dets
         return jacobian_dets
-    
+
     @property
     def bottom_edge_integration_point_coords(self):
         all_xs = []
@@ -332,7 +333,9 @@ class PlanarCartesianGrid(Grid):
             all_ys += ys
         return all_xs, all_ys
 
-    def get_samples(self, filter=None, number_of_samples_x=100, number_of_samples_y=100):
+    def get_samples(
+        self, filter=None, number_of_samples_x=100, number_of_samples_y=100
+    ):
         all_xs = []
         all_ys = []
         dx = self.length_x / (number_of_samples_x - 1)
@@ -371,16 +374,15 @@ class PlanarCartesianGrid(Grid):
             j = int((y - self.y_start) / self.length_y)
 
             return i, j
-        
+
         raise ValueError("Point ({},{}) is outside the grid".format(x, y))
-        
+
     def get_cell_from_coords(self, x, y):
         i, j = self.get_cell_indices_from_coords(x, y)
         return self.get_cell_at_indices(i, j)
 
 
 class TensorizedPlanarCartesianGrid(PlanarCartesianGrid):
-
     def __init__(self, x_start, y_start, x_end, y_end, resolution_x, resolution_y):
         super().__init__(x_start, y_start, x_end, y_end, resolution_x, resolution_y)
         # Cashed values for efficiency
@@ -441,19 +443,23 @@ class TensorizedPlanarCartesianGrid(PlanarCartesianGrid):
     def integration_point_xs(self):
         if self._integration_point_xs is None:
             self._integration_point_xs = self.integration_point_coords[:, 0].view(-1, 1)
-        
+
         return self._integration_point_xs
 
     @property
     def integration_point_ys(self):
         if self._integration_point_ys is None:
             self._integration_point_ys = self.integration_point_coords[:, 1].view(-1, 1)
-        
+
         return self._integration_point_ys
-    
+
     @property
     def integration_points_data(self):
-        return self.integration_point_coords, self.integration_point_weights, self.integration_point_jacobian_dets
+        return (
+            self.integration_point_coords,
+            self.integration_point_weights,
+            self.integration_point_jacobian_dets,
+        )
 
     @property
     def top_edge_integration_point_coords(self):
@@ -461,7 +467,7 @@ class TensorizedPlanarCartesianGrid(PlanarCartesianGrid):
             xs, ys = super().top_edge_integration_point_coords
             self._top_edge_integration_point_coords = tensorize_2d(xs, ys)
         return self._top_edge_integration_point_coords
-    
+
     @property
     def top_edge_integration_point_weights(self):
         if self._top_edge_integration_point_weights is None:
@@ -477,22 +483,30 @@ class TensorizedPlanarCartesianGrid(PlanarCartesianGrid):
             self._top_edge_integration_point_jacobian_dets = tensorize_1d(jacobian_dets)
 
         return self._top_edge_integration_point_jacobian_dets
-    
+
     @property
     def top_edge_integration_point_xs(self):
         if self._top_edge_integration_point_xs is None:
-            self._top_edge_integration_point_xs = self.top_edge_integration_point_coords[:, 0].view(-1, 1)
+            self._top_edge_integration_point_xs = (
+                self.top_edge_integration_point_coords[:, 0].view(-1, 1)
+            )
         return self._top_edge_integration_point_xs
 
     @property
     def top_edge_integration_point_ys(self):
         if self._top_edge_integration_point_ys is None:
-            self._top_edge_integration_point_ys = self.top_edge_integration_point_coords[:, 1].view(-1, 1)
+            self._top_edge_integration_point_ys = (
+                self.top_edge_integration_point_coords[:, 1].view(-1, 1)
+            )
         return self._top_edge_integration_point_ys
 
     @property
     def top_edge_integration_points_data(self):
-        return self.top_edge_integration_point_coords, self.top_edge_integration_point_weights, self.top_edge_integration_point_jacobian_dets
+        return (
+            self.top_edge_integration_point_coords,
+            self.top_edge_integration_point_weights,
+            self.top_edge_integration_point_jacobian_dets,
+        )
 
     @property
     def bottom_edge_integration_point_coords(self):
@@ -513,25 +527,35 @@ class TensorizedPlanarCartesianGrid(PlanarCartesianGrid):
     def bottom_edge_integration_point_jacobian_dets(self):
         if self._bottom_edge_integration_point_jacobian_dets is None:
             jacobian_dets = super().bottom_edge_integration_point_jacobian_dets
-            self._bottom_edge_integration_point_jacobian_dets = tensorize_1d(jacobian_dets)
+            self._bottom_edge_integration_point_jacobian_dets = tensorize_1d(
+                jacobian_dets
+            )
 
         return self._bottom_edge_integration_point_jacobian_dets
 
     @property
     def bottom_edge_integration_point_xs(self):
         if self._bottom_edge_integration_point_xs is None:
-            self._bottom_edge_integration_point_xs = self.bottom_edge_integration_point_coords[:, 0].view(-1, 1)
+            self._bottom_edge_integration_point_xs = (
+                self.bottom_edge_integration_point_coords[:, 0].view(-1, 1)
+            )
         return self._bottom_edge_integration_point_xs
 
     @property
     def bottom_edge_integration_point_ys(self):
         if self._bottom_edge_integration_point_ys is None:
-            self._bottom_edge_integration_point_ys = self.bottom_edge_integration_point_coords[:, 1].view(-1, 1)
+            self._bottom_edge_integration_point_ys = (
+                self.bottom_edge_integration_point_coords[:, 1].view(-1, 1)
+            )
         return self._bottom_edge_integration_point_ys
 
     @property
     def bottom_edge_integration_points_data(self):
-        return self.bottom_edge_integration_point_coords, self.bottom_edge_integration_point_weights, self.bottom_edge_integration_point_jacobian_dets
+        return (
+            self.bottom_edge_integration_point_coords,
+            self.bottom_edge_integration_point_weights,
+            self.bottom_edge_integration_point_jacobian_dets,
+        )
 
     @property
     def right_edge_integration_point_coords(self):
@@ -552,25 +576,35 @@ class TensorizedPlanarCartesianGrid(PlanarCartesianGrid):
     def right_edge_integration_point_jacobian_dets(self):
         if self._right_edge_integration_point_jacobian_dets is None:
             jacobian_dets = super().right_edge_integration_point_jacobian_dets
-            self._right_edge_integration_point_jacobian_dets = tensorize_1d(jacobian_dets)
+            self._right_edge_integration_point_jacobian_dets = tensorize_1d(
+                jacobian_dets
+            )
 
         return self._right_edge_integration_point_jacobian_dets
 
     @property
     def right_edge_integration_point_xs(self):
         if self._right_edge_integration_point_xs is None:
-            self._right_edge_integration_point_xs = self.right_edge_integration_point_coords[:, 0].view(-1, 1)
+            self._right_edge_integration_point_xs = (
+                self.right_edge_integration_point_coords[:, 0].view(-1, 1)
+            )
         return self._right_edge_integration_point_xs
 
     @property
     def right_edge_integration_point_ys(self):
         if self._right_edge_integration_point_ys is None:
-            self._right_edge_integration_point_ys = self.right_edge_integration_point_coords[:, 1].view(-1, 1)
+            self._right_edge_integration_point_ys = (
+                self.right_edge_integration_point_coords[:, 1].view(-1, 1)
+            )
         return self._right_edge_integration_point_ys
 
     @property
     def right_edge_integration_points_data(self):
-        return self.right_edge_integration_point_coords, self.right_edge_integration_point_weights, self.right_edge_integration_point_jacobian_dets
+        return (
+            self.right_edge_integration_point_coords,
+            self.right_edge_integration_point_weights,
+            self.right_edge_integration_point_jacobian_dets,
+        )
 
     @property
     def left_edge_integration_point_coords(self):
@@ -591,28 +625,42 @@ class TensorizedPlanarCartesianGrid(PlanarCartesianGrid):
     def left_edge_integration_point_jacobian_dets(self):
         if self._left_edge_integration_point_jacobian_dets is None:
             jacobian_dets = super().left_edge_integration_point_jacobian_dets
-            self._left_edge_integration_point_jacobian_dets = tensorize_1d(jacobian_dets)
+            self._left_edge_integration_point_jacobian_dets = tensorize_1d(
+                jacobian_dets
+            )
 
         return self._left_edge_integration_point_jacobian_dets
 
     @property
     def left_edge_integration_point_xs(self):
         if self._left_edge_integration_point_xs is None:
-            self._left_edge_integration_point_xs = self.left_edge_integration_point_coords[:, 0].view(-1, 1)
+            self._left_edge_integration_point_xs = (
+                self.left_edge_integration_point_coords[:, 0].view(-1, 1)
+            )
         return self._left_edge_integration_point_xs
 
     @property
     def left_edge_integration_point_ys(self):
         if self._left_edge_integration_point_ys is None:
-            self._left_edge_integration_point_ys = self.left_edge_integration_point_coords[:, 1].view(-1, 1)
+            self._left_edge_integration_point_ys = (
+                self.left_edge_integration_point_coords[:, 1].view(-1, 1)
+            )
         return self._left_edge_integration_point_ys
 
     @property
     def left_edge_integration_points_data(self):
-        return self.left_edge_integration_point_coords, self.left_edge_integration_point_weights, self.left_edge_integration_point_jacobian_dets
+        return (
+            self.left_edge_integration_point_coords,
+            self.left_edge_integration_point_weights,
+            self.left_edge_integration_point_jacobian_dets,
+        )
 
-    def prepare_samples(self, implicit_geometry=None, number_of_samples_x=100, number_of_samples_y=100):
-        xs, ys = super().get_samples(implicit_geometry, number_of_samples_x, number_of_samples_y)
+    def prepare_samples(
+        self, implicit_geometry=None, number_of_samples_x=100, number_of_samples_y=100
+    ):
+        xs, ys = super().get_samples(
+            implicit_geometry, number_of_samples_x, number_of_samples_y
+        )
         self._samples_coords = tensorize_2d(xs, ys)
 
     @property

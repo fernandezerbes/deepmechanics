@@ -1,10 +1,10 @@
+import unittest
+
 from deepmechanics.grid import Grid, PlanarCartesianGrid
 from deepmechanics.implicitgeometry import make_rectangle
-import unittest
 
 
 class TestGrid(unittest.TestCase):
-
     def setUp(self):
         self.grid = Grid(2)
 
@@ -16,8 +16,8 @@ class TestGrid(unittest.TestCase):
         # leaf_cells is empty
         self.assertFalse(self.grid.leaf_cells)
 
-class TestPlanarCartesianGrid(unittest.TestCase):
 
+class TestPlanarCartesianGrid(unittest.TestCase):
     def setUp(self):
         self.grid = PlanarCartesianGrid(1.0, 1.0, 5.0, 3.0, 4, 2)
 
@@ -33,18 +33,18 @@ class TestPlanarCartesianGrid(unittest.TestCase):
         self.assertEqual(len(self.grid.top_base_cells), 4)
 
         for cell in self.grid.top_base_cells:
-          _, ys = cell.top_coords
-          for y in ys:
-            self.assertAlmostEqual(y, self.grid.y_end)
+            _, ys = cell.top_coords
+            for y in ys:
+                self.assertAlmostEqual(y, self.grid.y_end)
 
     def test_top_leaf_cells(self):
         self.grid.get_cell_at_indices(0, self.grid.j_end).refine()
         self.assertEqual(len(self.grid.top_leaf_cells), 5)
 
         for cell in self.grid.top_leaf_cells:
-          _, ys = cell.top_coords
-          for y in ys:
-            self.assertAlmostEqual(y, self.grid.y_end)
+            _, ys = cell.top_coords
+            for y in ys:
+                self.assertAlmostEqual(y, self.grid.y_end)
 
         self.grid.get_cell_at_indices(0, self.grid.j_end).delete_all_children()
 
@@ -52,18 +52,18 @@ class TestPlanarCartesianGrid(unittest.TestCase):
         self.assertEqual(len(self.grid.bottom_base_cells), 4)
 
         for cell in self.grid.bottom_base_cells:
-          _, ys = cell.bottom_coords
-          for y in ys:
-            self.assertAlmostEqual(y, self.grid.y_start)
+            _, ys = cell.bottom_coords
+            for y in ys:
+                self.assertAlmostEqual(y, self.grid.y_start)
 
     def test_bottom_leaf_cells(self):
         self.grid.get_cell_at_indices(0, 0).refine()
         self.assertEqual(len(self.grid.bottom_leaf_cells), 5)
 
         for cell in self.grid.bottom_leaf_cells:
-          _, ys = cell.bottom_coords
-          for y in ys:
-            self.assertAlmostEqual(y, self.grid.y_start)
+            _, ys = cell.bottom_coords
+            for y in ys:
+                self.assertAlmostEqual(y, self.grid.y_start)
 
         self.grid.get_cell_at_indices(0, 0).delete_all_children()
 
@@ -71,18 +71,18 @@ class TestPlanarCartesianGrid(unittest.TestCase):
         self.assertEqual(len(self.grid.right_base_cells), 2)
 
         for cell in self.grid.right_base_cells:
-          xs, _ = cell.right_coords
-          for x in xs:
-            self.assertAlmostEqual(x, self.grid.x_end)
+            xs, _ = cell.right_coords
+            for x in xs:
+                self.assertAlmostEqual(x, self.grid.x_end)
 
     def test_right_leaf_cells(self):
         self.grid.get_cell_at_indices(self.grid.i_end, 0).refine()
         self.assertEqual(len(self.grid.right_leaf_cells), 3)
 
         for cell in self.grid.right_leaf_cells:
-          xs, _ = cell.right_coords
-          for x in xs:
-            self.assertAlmostEqual(x, self.grid.x_end)
+            xs, _ = cell.right_coords
+            for x in xs:
+                self.assertAlmostEqual(x, self.grid.x_end)
 
         self.grid.get_cell_at_indices(self.grid.i_end, 0).delete_all_children()
 
@@ -90,18 +90,18 @@ class TestPlanarCartesianGrid(unittest.TestCase):
         self.assertEqual(len(self.grid.left_base_cells), 2)
 
         for cell in self.grid.left_base_cells:
-          xs, _ = cell.left_coords
-          for x in xs:
-            self.assertAlmostEqual(x, self.grid.x_start)
+            xs, _ = cell.left_coords
+            for x in xs:
+                self.assertAlmostEqual(x, self.grid.x_start)
 
     def test_left_leaf_cells(self):
         self.grid.get_cell_at_indices(0, 0).refine()
         self.assertEqual(len(self.grid.left_leaf_cells), 3)
 
         for cell in self.grid.left_leaf_cells:
-          xs, _ = cell.left_coords
-          for x in xs:
-            self.assertAlmostEqual(x, self.grid.x_start)
+            xs, _ = cell.left_coords
+            for x in xs:
+                self.assertAlmostEqual(x, self.grid.x_start)
 
         self.grid.get_cell_at_indices(0, 0).delete_all_children()
 
@@ -129,7 +129,7 @@ class TestPlanarCartesianGrid(unittest.TestCase):
         _, ys = self.grid.top_edge_integration_point_coords
 
         for y in ys:
-          self.assertAlmostEqual(y, self.grid.y_end)
+            self.assertAlmostEqual(y, self.grid.y_end)
 
         self.grid.get_cell_at_indices(0, self.grid.j_end).delete_all_children()
 
@@ -139,7 +139,7 @@ class TestPlanarCartesianGrid(unittest.TestCase):
         _, ys = self.grid.bottom_edge_integration_point_coords
 
         for y in ys:
-          self.assertAlmostEqual(y, self.grid.y_start)
+            self.assertAlmostEqual(y, self.grid.y_start)
 
         self.grid.get_cell_at_indices(0, 0).delete_all_children()
 
@@ -149,7 +149,7 @@ class TestPlanarCartesianGrid(unittest.TestCase):
         xs, _ = self.grid.right_edge_integration_point_coords
 
         for x in xs:
-          self.assertAlmostEqual(x, self.grid.x_end)
+            self.assertAlmostEqual(x, self.grid.x_end)
 
         self.grid.get_cell_at_indices(self.grid.i_end, 0).delete_all_children()
 
@@ -159,7 +159,7 @@ class TestPlanarCartesianGrid(unittest.TestCase):
         xs, _ = self.grid.left_edge_integration_point_coords
 
         for x in xs:
-          self.assertAlmostEqual(x, self.grid.x_start)
+            self.assertAlmostEqual(x, self.grid.x_start)
 
         self.grid.get_cell_at_indices(0, 0).delete_all_children()
 
@@ -240,7 +240,7 @@ class TestPlanarCartesianGrid(unittest.TestCase):
 
         # Inside
         self.assertTrue(self.grid._index_exists(0, self.grid.j_end))
-        
+
         # Outside
         self.assertFalse(self.grid._index_exists(1, 100))
         self.assertFalse(self.grid._index_exists(1, -100))
@@ -249,12 +249,15 @@ class TestPlanarCartesianGrid(unittest.TestCase):
 
     def test_get_cell_at_indices(self):
         self.assertEqual(self.grid.get_cell_at_indices(0, 0), self.grid.base_cells[0])
-        self.assertEqual(self.grid.get_cell_at_indices(self.grid.i_end, self.grid.j_end), self.grid.base_cells[-1])
+        self.assertEqual(
+            self.grid.get_cell_at_indices(self.grid.i_end, self.grid.j_end),
+            self.grid.base_cells[-1],
+        )
 
     def test_point_is_inside_grid(self):
         # Inside
         self.assertTrue(self.grid._point_is_inside_grid(2.0, 2.0))
-        
+
         # Outside
         self.assertFalse(self.grid._point_is_inside_grid(1, 100))
         self.assertFalse(self.grid._point_is_inside_grid(1, -100))
@@ -263,8 +266,15 @@ class TestPlanarCartesianGrid(unittest.TestCase):
 
     def test_get_cell_indices_from_coords(self):
         self.assertTrue(self.grid.get_cell_indices_from_coords(1.1, 1.1), (0, 0))
-        self.assertTrue(self.grid.get_cell_indices_from_coords(4.9, 2.9), (self.grid.i_end, self.grid.j_end))
+        self.assertTrue(
+            self.grid.get_cell_indices_from_coords(4.9, 2.9),
+            (self.grid.i_end, self.grid.j_end),
+        )
 
     def test_get_cell_from_coords(self):
-        self.assertTrue(self.grid.get_cell_from_coords(1.1, 1.1), self.grid.base_cells[0])
-        self.assertTrue(self.grid.get_cell_from_coords(4.9, 2.9), self.grid.base_cells[-1])
+        self.assertTrue(
+            self.grid.get_cell_from_coords(1.1, 1.1), self.grid.base_cells[0]
+        )
+        self.assertTrue(
+            self.grid.get_cell_from_coords(4.9, 2.9), self.grid.base_cells[-1]
+        )

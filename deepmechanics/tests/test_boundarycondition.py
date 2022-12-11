@@ -1,10 +1,10 @@
+import unittest
+
 import deepmechanics.boundarycondition as bcond
 from deepmechanics.grid import TensorizedPlanarCartesianGrid
-import unittest
 
 
 class TestFixedDisplacementsOnTopEdge(unittest.TestCase):
-
     def setUp(self):
         self.grid = TensorizedPlanarCartesianGrid(0, 0, 1, 1, 1, 1)
         self.grid.prepare_samples(number_of_samples_x=3, number_of_samples_y=3)

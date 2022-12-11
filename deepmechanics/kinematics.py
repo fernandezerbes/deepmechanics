@@ -2,7 +2,6 @@ from deepmechanics.utilities import get_derivative
 
 
 class LinearKinematicLaw:
-    
     def compute_strains(self, ux, uy, coords):
         # Get first order derivatives of displacements w.r.t. x and y
         dux = get_derivative(ux, coords, 1)

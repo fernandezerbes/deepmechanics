@@ -1,12 +1,13 @@
+import unittest
+
 import torch
 from torch.autograd import grad
 from torch.functional import unique
+
 from deepmechanics import utilities
-import unittest
 
 
 class TestIntegration(unittest.TestCase):
-
     def test_make_array_unique(self):
         non_unique_array = [1, 2, 1, 2, 3, 4, 4, 2, 1]
         unique_array = [1, 2, 3, 4]
@@ -14,7 +15,9 @@ class TestIntegration(unittest.TestCase):
         self.assertEqual(utilities.make_array_unique(non_unique_array), unique_array)
 
     def test_get_derivative(self):
-        xs = torch.linspace(0, 10, 11, requires_grad=True, dtype=torch.float64).view(-1, 1)
+        xs = torch.linspace(0, 10, 11, requires_grad=True, dtype=torch.float64).view(
+            -1, 1
+        )
         ys = xs**3
         first_derivative = utilities.get_derivative(ys, xs, 1)
         second_derivative = utilities.get_derivative(ys, xs, 2)
