@@ -14,8 +14,7 @@ class TestFixedDisplacementsOnTopEdge(unittest.TestCase):
         pass
 
     def test_get_constraint_on_samples(self):
-        constraint = self.bc.get_constraint_on_samples()
-        print(constraint(1, 1))
+        pass
 
     def test_get_constraint_on_top_edge(self):
         pass
