@@ -32,7 +32,6 @@ class MechanicalModel(Model):
         self.material_model = material_model
 
     def get_displacements(self, coords, constraint):
-
         displacements = self.approximator(coords)
 
         ux = displacements[:, 0].view(-1, 1)
@@ -49,7 +48,6 @@ class MechanicalModel(Model):
         return self.material_model.compute_stresses(ex, ey, gamma_xy)
 
     def closure(self):
-
         self.optimizer.zero_grad()
         self.total_energy.backward(retain_graph=True)
 
@@ -69,7 +67,6 @@ class MechanicalModel(Model):
 
         # Train
         for i in range(epochs + 1):
-
             # Predict field quantities
             ux, uy = self.get_displacements(coords, constraint)
             ex, ey, gamma_xy = self.kinematic_law.compute_strains(ux, uy, coords)
